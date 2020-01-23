@@ -4,6 +4,9 @@
 
 Minimalist Go package aimed at creating Console User Interfaces.
 
+A community fork based on the amazing work of [jroimartin](https://github.com/jroimartin/gocui),
+extend for self use.
+
 ## Features
 
 * Minimalist API.
