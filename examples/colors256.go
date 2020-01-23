@@ -39,8 +39,9 @@ func layout(g *gocui.Gui) error {
 
         // 256-colors escape codes
         for i := 0; i < 256; i++ {
-            str := fmt.Sprintf("\x1b[48;5;%dm\x1b[30m%3d\x1b[0m ", i, i)
-            str += fmt.Sprintf("\x1b[38;5;%dm%3d\x1b[0m ", i, i)
+            str := fmt.Sprintf("\x1b[48;5;%dm\x1b[30m%3d\x1b[0m", i, i)
+            str += fmt.Sprintf("\x1b[38;5;%dm%3d\x1b[0m", i, i)
+            //str += fmt.Sprintf("\x1b[%dm%3d\x1b[0m", i, i)
 
             if (i+1)%10 == 0 {
                 str += "\n"
@@ -49,14 +50,14 @@ func layout(g *gocui.Gui) error {
             fmt.Fprint(v, str)
         }
 
-        fmt.Fprint(v, "\n\n")
+        fmt.Fprint(v, "\n")
 
         // 8-colors escape codes
         ctr := 0
         for i := 0; i <= 7; i++ {
             for _, j := range []int{1, 4, 7} {
-                str := fmt.Sprintf("\x1b[3%d;%dm%d:%d\x1b[0m ", i, j, i, j)
-                if (ctr+1)%20 == 0 {
+                str := fmt.Sprintf("\x1b[3%d;%dm %d:%d \x1b[0m", i, j, i, j)
+                if (ctr+1)%10 == 0 {
                     str += "\n"
                 }
 

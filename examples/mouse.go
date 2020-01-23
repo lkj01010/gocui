@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-    g, err := gocui.NewGui(gocui.OutputNormal)
+    g, err := gocui.NewGui(gocui.Output256)
     if err != nil {
         log.Panicln(err)
     }
@@ -37,9 +37,12 @@ func layout(g *gocui.Gui) error {
         if err != gocui.ErrUnknownView {
             return err
         }
+        g.FgColor = gocui.ColorGreen
+        g.BgColor = gocui.ColorRed
         v.Highlight = true
-        v.SelBgColor = gocui.ColorGreen
-        v.SelFgColor = gocui.ColorBlack
+        v.FgColor = gocui.ColorBlue
+        //v.SelBgColor = 240
+        v.SelFgColor = gocui.ColorWhiteH | gocui.AttrBold
         fmt.Fprintln(v, "Button 1 - line 1")
         fmt.Fprintln(v, "Button 1 - line 2")
         fmt.Fprintln(v, "Button 1 - line 3")

@@ -30,3 +30,15 @@ const (
     AttrUnderline           = Attribute(termbox.AttrUnderline)
     AttrReverse             = Attribute(termbox.AttrReverse)
 )
+
+// Use in Output256 mode
+const (
+    ColorBlackH   Attribute = ColorBlack + 8
+    ColorRedH               = ColorRed + 8
+    ColorGreenH             = ColorGreen + 8
+    ColorYellowH            = ColorYellow + 8
+    ColorBlueH              = ColorBlue + 8
+    ColorMagentaH           = ColorMagenta + 8
+    ColorCyanH              = ColorCyan + 8
+    ColorWhiteH             = ColorWhite + 8
+)

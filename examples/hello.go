@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-    g, err := gocui.NewGui(gocui.OutputNormal)
+    g, err := gocui.NewGui(gocui.Output256)
     //g.ASCII = true
     if err != nil {
         log.Panicln(err)
@@ -32,11 +32,12 @@ func main() {
 
 func layout(g *gocui.Gui) error {
     maxX, maxY := g.Size()
+    //if v, err := g.SetView("hello", 0, 0, 17, 4); err != nil {
     if v, err := g.SetView("hello", maxX/2-7, maxY/2, maxX/2+17, maxY/2+2); err != nil {
         if err != gocui.ErrUnknownView {
             return err
         }
-        fmt.Fprintln(v, "Hello 你好我要祝核苏 world!")
+        fmt.Fprintln(v, "Hello world!")
     }
     return nil
 }

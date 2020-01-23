@@ -121,6 +121,7 @@ func main() {
 
     g.Highlight = true
     g.SelFgColor = gocui.ColorRed
+    g.Mouse = true
 
     help := NewHelpWidget("help", 1, 1, helpText)
     status := NewStatusbarWidget("status", 1, 7, 50)
@@ -132,6 +133,13 @@ func main() {
         log.Panicln(err)
     }
     if err := g.SetKeybinding("", gocui.KeyTab, gocui.ModNone, toggleButton); err != nil {
+        log.Panicln(err)
+    }
+    if err := g.SetKeybinding("", gocui.MouseLeft, gocui.ModNone, func(g *gocui.Gui,
+        v *gocui.View) error {
+        g.SetCurrentView(v.Name())
+        return nil
+    }); err != nil {
         log.Panicln(err)
     }
 
