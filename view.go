@@ -112,7 +112,11 @@ func newView(name string, x0, y0, x1, y1 int, mode OutputMode) *View {
 
 // Size returns the number of visible columns and rows in the View.
 func (v *View) Size() (x, y int) {
-    return v.x1 - v.x0 - 1, v.y1 - v.y0 - 1
+    if v.Frame {
+        return v.x1 - v.x0 - 1, v.y1 - v.y0 - 1
+    } else {
+        return v.x1 - v.x0 + 1, v.y1 - v.y0 + 1
+    }
 }
 
 // Name returns the name of the view.
@@ -153,8 +157,11 @@ func (v *View) setRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
         bgColor = v.SelBgColor
     }
 
-    termbox.SetCell(v.x0+x+1, v.y0+y+1, ch,
-        termbox.Attribute(fgColor), termbox.Attribute(bgColor))
+    tbx, tby := v.x0+x, v.y0+y
+    if v.Frame {
+        tbx, tby = v.x0+x+1, v.y0+y+1
+    }
+    termbox.SetCell(tbx, tby, ch, termbox.Attribute(fgColor), termbox.Attribute(bgColor))
 
     return nil
 }
@@ -163,9 +170,16 @@ func (v *View) setRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
 // relative to the view. It checks if the position is valid.
 func (v *View) SetCursor(x, y int) error {
     maxX, maxY := v.Size()
-    if x < 0 || x >= maxX || y < 0 || y >= maxY {
-        return errors.New("invalid point")
+    if v.Frame {
+        if x < 0 || x >= maxX || y < 0 || y >= maxY {
+            return errors.New("invalid point")
+        }
+    } else {
+        if x < 0 || x > maxX || y < 0 || y > maxY {
+            return errors.New("invalid point")
+        }
     }
+
     v.cx = x
     v.cy = y
     return nil
@@ -402,8 +416,14 @@ func (v *View) clearRunes() {
     maxX, maxY := v.Size()
     for x := 0; x < maxX; x++ {
         for y := 0; y < maxY; y++ {
-            termbox.SetCell(v.x0+x+1, v.y0+y+1, ' ',
-                termbox.Attribute(v.FgColor), termbox.Attribute(v.BgColor))
+            //termbox.SetCell(v.x0+x+1, v.y0+y+1, ' ', termbox.Attribute(v.FgColor), termbox.Attribute(v.BgColor))
+
+            // mid:
+            tbx, tby := v.x0+x, v.y0+y
+            if v.Frame {
+                tbx, tby = v.x0+x+1, v.y0+y+1
+            }
+            termbox.SetCell(tbx, tby, ' ', termbox.Attribute(v.FgColor), termbox.Attribute(v.BgColor))
         }
     }
 }

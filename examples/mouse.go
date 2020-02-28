@@ -38,8 +38,9 @@ func layout(g *gocui.Gui) error {
             return err
         }
         g.FgColor = gocui.ColorGreen
-        g.BgColor = gocui.ColorRed
+        g.BgColor = gocui.ColorWhiteH
         v.Highlight = true
+        v.BgColor = gocui.ColorGreen
         v.FgColor = gocui.ColorBlue
         //v.SelBgColor = 240
         v.SelFgColor = gocui.ColorWhiteH | gocui.AttrBold

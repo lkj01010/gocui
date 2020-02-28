@@ -36,6 +36,7 @@ type Gui struct {
     userEvents  chan userEvent
     views       []*View
     currentView *View
+    layouters   []Layouter
     managers    []Manager
     keybindings []*keybinding
     maxX, maxY  int
@@ -128,7 +129,7 @@ func (g *Gui) Rune(x, y int) (rune, error) {
 // ErrUnknownView is returned, which allows to assert if the View must
 // be initialized. It checks if the position is valid.
 func (g *Gui) SetView(name string, x0, y0, x1, y1 int) (*View, error) {
-    if x0 >= x1 || y0 >= y1 {
+    if x0 > x1 || y0 > y1 {
         return nil, errors.New("invalid dimensions")
     }
     if name == "" {
@@ -197,8 +198,15 @@ func (g *Gui) ViewByPosition(x, y int) (*View, error) {
     // traverse views in reverse order checking top views first
     for i := len(g.views); i > 0; i-- {
         v := g.views[i-1]
-        if x > v.x0 && x < v.x1 && y > v.y0 && y < v.y1 {
-            return v, nil
+        // note: when press on view, ignore frame area
+        if v.Frame {
+            if x > v.x0 && x < v.x1 && y > v.y0 && y < v.y1 {
+                return v, nil
+            }
+        } else {
+            if x >= v.x0 && x <= v.x1 && y >= v.y0 && y <= v.y1 {
+                return v, nil
+            }
         }
     }
     return nil, ErrUnknownView
@@ -310,6 +318,10 @@ type userEvent struct {
 // which the user events will be handled is not guaranteed.
 func (g *Gui) Update(f func(*Gui) error) {
     go func() { g.userEvents <- userEvent{f: f} }()
+}
+
+func (g *Gui) AddLayouter(l Layouter) {
+    g.layouters = append(g.layouters, l)
 }
 
 // A Manager is in charge of GUI's layout and can be used to build widgets.
@@ -431,6 +443,9 @@ func (g *Gui) flush() error {
     }
     g.maxX, g.maxY = maxX, maxY
 
+    for _, l := range g.layouters {
+        l.Reset()
+    }
     for _, m := range g.managers {
         if err := m.Layout(g); err != nil {
             return err
@@ -606,7 +621,15 @@ func (g *Gui) onKey(ev *termbox.Event) error {
         if err != nil {
             break
         }
-        if err := v.SetCursor(mx-v.x0-1, my-v.y0-1); err != nil {
+
+        // 在view中的相对位置
+        var relx, rely int
+        if v.Frame {
+            relx, rely = mx - v.x0 - 1, my - v.y0 - 1
+        } else {
+            relx, rely = mx - v.x0, my - v.y0
+        }
+        if err := v.SetCursor(relx, rely); err != nil {
             return err
         }
         if _, err := g.execKeybindings(v, ev); err != nil {
