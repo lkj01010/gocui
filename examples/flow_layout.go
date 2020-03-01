@@ -33,7 +33,7 @@ func NewLabel(name string, body string) *Label {
     return &Label{name: name, w: w, h: h, body: body}
 }
 
-func (w *Label) Layout(g *gocui.Gui) error {
+func (w *Label) Setup(g *gocui.Gui) error {
     v, err := g.SetView(w.name, 0, 0, w.w, w.h)
     if err != nil {
         if err != gocui.ErrUnknownView {

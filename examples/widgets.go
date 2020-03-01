@@ -37,7 +37,7 @@ func NewHelpWidget(name string, x, y int, body string) *HelpWidget {
     return &HelpWidget{name: name, x: x, y: y, w: w, h: h, body: body}
 }
 
-func (w *HelpWidget) Layout(g *gocui.Gui) error {
+func (w *HelpWidget) Setup(g *gocui.Gui) error {
     v, err := g.SetView(w.name, w.x, w.y, w.x+w.w, w.y+w.h)
     if err != nil {
         if err != gocui.ErrUnknownView {
@@ -71,7 +71,7 @@ func (w *StatusbarWidget) Val() float64 {
     return w.val
 }
 
-func (w *StatusbarWidget) Layout(g *gocui.Gui) error {
+func (w *StatusbarWidget) Setup(g *gocui.Gui) error {
     v, err := g.SetView(w.name, w.x, w.y, w.x+w.w, w.y+2)
     if err != nil && err != gocui.ErrUnknownView {
         return err
@@ -95,7 +95,7 @@ func NewButtonWidget(name string, x, y int, label string, handler func(g *gocui.
     return &ButtonWidget{name: name, x: x, y: y, w: len(label) + 1, label: label, handler: handler}
 }
 
-func (w *ButtonWidget) Layout(g *gocui.Gui) error {
+func (w *ButtonWidget) Setup(g *gocui.Gui) error {
     v, err := g.SetView(w.name, w.x, w.y, w.x+w.w, w.y+2)
     if err != nil {
         if err != gocui.ErrUnknownView {

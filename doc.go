@@ -25,7 +25,7 @@ Set GUI managers:
 	g.SetManager(mgr1, mgr2)
 
 Managers are in charge of GUI's layout and can be used to build widgets. On
-each iteration of the GUI's main loop, the Layout function of each configured
+each iteration of the GUI's main loop, the Setup function of each configured
 manager is executed. Managers are used to set-up and update the application's
 main views, being possible to freely change them during execution. Also, it is
 important to mention that a main loop iteration is executed on each reported
@@ -69,7 +69,7 @@ Mouse events are handled like any other keybinding:
 	}
 
 IMPORTANT: Views can only be created, destroyed or updated in three ways: from
-the Layout function within managers, from keybinding callbacks or via
+the Setup function within managers, from keybinding callbacks or via
 *Gui.Update(). The reason for this is that it allows gocui to be
 concurrent-safe. So, if you want to update your GUI from a goroutine, you must
 use *Gui.Update(). For example:

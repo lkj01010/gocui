@@ -36,7 +36,7 @@ type Gui struct {
     userEvents  chan userEvent
     views       []*View
     currentView *View
-    layouters   []Layouter
+    //layouts     []Layout
     managers    []Manager
     keybindings []*keybinding
     maxX, maxY  int
@@ -320,15 +320,16 @@ func (g *Gui) Update(f func(*Gui) error) {
     go func() { g.userEvents <- userEvent{f: f} }()
 }
 
-func (g *Gui) AddLayouter(l Layouter) {
-    g.layouters = append(g.layouters, l)
-}
+// del:
+//func (g *Gui) AddLayout(l Layout) {
+//    g.layouts = append(g.layouts, l)
+//}
 
 // A Manager is in charge of GUI's layout and can be used to build widgets.
 type Manager interface {
-    // Layout is called every time the GUI is redrawn, it must contain the
+    // Setup is called every time the GUI is redrawn, it must contain the
     // base views and its initializations.
-    Layout(*Gui) error
+    Setup(*Gui) error
 }
 
 // The ManagerFunc type is an adapter to allow the use of ordinary functions as
@@ -336,8 +337,8 @@ type Manager interface {
 // is an Manager object that calls f.
 type ManagerFunc func(*Gui) error
 
-// Layout calls f(g)
-func (f ManagerFunc) Layout(g *Gui) error {
+// Setup calls f(g)
+func (f ManagerFunc) Setup(g *Gui) error {
     return f(g)
 }
 
@@ -443,11 +444,8 @@ func (g *Gui) flush() error {
     }
     g.maxX, g.maxY = maxX, maxY
 
-    for _, l := range g.layouters {
-        l.Reset()
-    }
     for _, m := range g.managers {
-        if err := m.Layout(g); err != nil {
+        if err := m.Setup(g); err != nil {
             return err
         }
     }
@@ -625,9 +623,9 @@ func (g *Gui) onKey(ev *termbox.Event) error {
         // 在view中的相对位置
         var relx, rely int
         if v.Frame {
-            relx, rely = mx - v.x0 - 1, my - v.y0 - 1
+            relx, rely = mx-v.x0-1, my-v.y0-1
         } else {
-            relx, rely = mx - v.x0, my - v.y0
+            relx, rely = mx-v.x0, my-v.y0
         }
         if err := v.SetCursor(relx, rely); err != nil {
             return err
