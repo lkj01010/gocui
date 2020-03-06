@@ -25,6 +25,7 @@ const (
 )
 
 // Text style attributes.
+// mid: bg use AttrBold -> blink effect
 const (
     AttrBold      Attribute = Attribute(termbox.AttrBold)
     AttrUnderline           = Attribute(termbox.AttrUnderline)
